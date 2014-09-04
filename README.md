@@ -3,6 +3,8 @@ Guardpost.Net
 
 A .NET implementation of Mailgun's [Guardpost API](https://api.mailgun.net/v2/address).
 
+[![Build status](https://ci.appveyor.com/api/projects/status/72m4u80mt587llc2)](https://ci.appveyor.com/project/rbwestmoreland/guardpost-net)
+
 Installation
 ---  
 Just download and add [Guardpost.Net.cs](src/Guardpost.Net/Guardpost.Net.cs) to your project.
