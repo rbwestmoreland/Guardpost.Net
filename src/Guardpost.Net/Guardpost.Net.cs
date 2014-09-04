@@ -97,9 +97,6 @@
 
         public class EmailParts
         {
-            [JsonProperty("display_name")]
-            public string DisplayName { get; set; }
-
             [JsonProperty("local_part")]
             public string LocalPart { get; set; }
 

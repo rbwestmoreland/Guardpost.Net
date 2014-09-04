@@ -10,7 +10,7 @@
         /// <summary>
         /// API Key in the My Account tab of your Mailgun account (the one with the “pub-key” prefix).
         /// </summary>
-        public static string MailgunPublicApiKey = "40733976039a7f5c8193eea7618d0313aababe20";
+        public static string MailgunPublicApiKey = "pubkey-89ou0nuo2u5b3q7tn8bsz0vitmekk721";
 
         [TestClass]
         public class ConstructorTests : HttpGuardpostClientTests
@@ -66,7 +66,6 @@
                     Assert.IsFalse(validateResponse.IsValid);
                     Assert.AreEqual(address, validateResponse.Address);
                     Assert.IsNotNull(validateResponse.Parts);
-                    Assert.IsNull(validateResponse.Parts.DisplayName);
                     Assert.IsNull(validateResponse.Parts.Domain);
                     Assert.IsNull(validateResponse.Parts.LocalPart);
                     Assert.IsNull(validateResponse.DidYouMean);
@@ -86,7 +85,6 @@
                     Assert.IsTrue(validateResponse.IsValid);
                     Assert.AreEqual(address, validateResponse.Address);
                     Assert.IsNotNull(validateResponse.Parts);
-                    Assert.AreEqual(string.Empty, validateResponse.Parts.DisplayName);
                     Assert.AreEqual("gmail.com", validateResponse.Parts.Domain);
                     Assert.AreEqual("john.smith", validateResponse.Parts.LocalPart);
                     Assert.IsNull(validateResponse.DidYouMean);
