@@ -77,8 +77,8 @@
             {
                 using (var client = new HttpGuardpostClient(MailgunPublicApiKey))
                 {
-                    //john.smith@gmail.com: Meets Gmail 6 character minimum and all other requirements.
-                    var address = "john.smith@gmail.com";
+                    //johnsmith@gmail.com: Meets Gmail 6 character minimum and all other requirements.
+                    var address = "johnsmith@gmail.com";
                     var validateResponse = client.Validate(address);
 
                     Assert.IsNotNull(validateResponse);
@@ -86,7 +86,7 @@
                     Assert.AreEqual(address, validateResponse.Address);
                     Assert.IsNotNull(validateResponse.Parts);
                     Assert.AreEqual("gmail.com", validateResponse.Parts.Domain);
-                    Assert.AreEqual("john.smith", validateResponse.Parts.LocalPart);
+                    Assert.AreEqual("johnsmith", validateResponse.Parts.LocalPart);
                     Assert.IsNull(validateResponse.DidYouMean);
                 }
             }
@@ -172,7 +172,7 @@
             {
                 using (var client = new HttpGuardpostClient("invalidApiKey"))
                 {
-                    client.Parse(new [] { "john.smith@gmail.com" }, false);
+                    client.Parse(new [] { "johnsmith@gmail.com" }, false);
                 }
             }
         }
