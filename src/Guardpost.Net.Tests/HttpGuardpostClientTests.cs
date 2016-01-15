@@ -3,6 +3,7 @@
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using System;
     using System.Linq;
+    using System.Threading.Tasks;
 
     [TestClass]
     public class HttpGuardpostClientTests
@@ -30,37 +31,37 @@
         }
 
         [TestClass]
-        public class ValidateTests : HttpGuardpostClientTests
+        public class ValidateAsyncTests : HttpGuardpostClientTests
         {
             [TestMethod]
             [ExpectedException(typeof(ArgumentNullException))]
-            public void WhenAddressIsNullOrEmpty_ShouldThrow()
+            public async Task WhenAddressIsNullOrEmpty_ShouldThrow()
             {
                 using (var client = new HttpGuardpostClient(MailgunPublicApiKey))
                 {
-                    client.Validate(null);
+                    await client.ValidateAsync(null).ConfigureAwait(false);
                 }
             }
 
             [TestMethod]
             [ExpectedException(typeof(ArgumentException))]
-            public void WhenAddressIsGreaterThan512Characters_ShouldThrow()
+            public async Task WhenAddressIsGreaterThan512Characters_ShouldThrow()
             {
                 using (var client = new HttpGuardpostClient(MailgunPublicApiKey))
                 {
                     var address = new string('a', 513);
-                    client.Validate(address);
+                    await client.ValidateAsync(address).ConfigureAwait(false);
                 }
             }
 
             [TestMethod]
-            public void WhenAddressIsInvalid_ShouldReturn()
+            public async Task WhenAddressIsInvalid_ShouldReturn()
             {
                 using (var client = new HttpGuardpostClient(MailgunPublicApiKey))
                 {
                     //john@gmail.com: Does not meet Gmail minimum local-part length of 6 characters.
                     var address = "john@gmail.com";
-                    var validateResponse = client.Validate(address);
+                    var validateResponse = await client.ValidateAsync(address).ConfigureAwait(false);
 
                     Assert.IsNotNull(validateResponse);
                     Assert.IsFalse(validateResponse.IsValid);
@@ -73,13 +74,13 @@
             }
 
             [TestMethod]
-            public void WhenAddressIsValid_ShouldReturn()
+            public async Task WhenAddressIsValid_ShouldReturn()
             {
                 using (var client = new HttpGuardpostClient(MailgunPublicApiKey))
                 {
                     //johnsmith@gmail.com: Meets Gmail 6 character minimum and all other requirements.
                     var address = "johnsmith@gmail.com";
-                    var validateResponse = client.Validate(address);
+                    var validateResponse = await client.ValidateAsync(address).ConfigureAwait(false);
 
                     Assert.IsNotNull(validateResponse);
                     Assert.IsTrue(validateResponse.IsValid);
@@ -93,34 +94,34 @@
 
             [TestMethod]
             [ExpectedException(typeof(InvalidOperationException))]
-            public void WhenApiKeyIsInvalid_ShouldThrow()
+            public async Task WhenApiKeyIsInvalid_ShouldThrow()
             {
                 using (var client = new HttpGuardpostClient("invalidApiKey"))
                 {
-                    client.Validate("john.smith@gmail.com");
+                    await client.ValidateAsync("john.smith@gmail.com").ConfigureAwait(false);
                 }
             }
         }
 
         [TestClass]
-        public class ParseTests : HttpGuardpostClientTests
+        public class ParseAsyncTests : HttpGuardpostClientTests
         {
             [TestMethod]
             [ExpectedException(typeof(ArgumentNullException))]
-            public void WhenAddressesIsNull_ShouldThrow()
+            public async Task WhenAddressesIsNull_ShouldThrow()
             {
                 using (var client = new HttpGuardpostClient(MailgunPublicApiKey))
                 {
-                    client.Parse(null, true);
+                    await client.ParseAsync(null, true).ConfigureAwait(false);
                 }
             }
 
             [TestMethod]
-            public void WhenAddressesIsEmpty_ShouldReturn()
+            public async Task WhenAddressesIsEmpty_ShouldReturn()
             {
                 using (var client = new HttpGuardpostClient(MailgunPublicApiKey))
                 {
-                    var parseResponse = client.Parse(Enumerable.Empty<string>(), true);
+                    var parseResponse = await client.ParseAsync(Enumerable.Empty<string>(), true).ConfigureAwait(false);
 
                     Assert.IsNotNull(parseResponse);
                     Assert.IsNotNull(parseResponse.Parsed);
@@ -131,11 +132,11 @@
             }
 
             [TestMethod]
-            public void WhenSyntaxOnlyIsTrue()
+            public async Task WhenSyntaxOnlyIsTrue()
             {
                 using (var client = new HttpGuardpostClient(MailgunPublicApiKey))
                 {
-                    var parseResponse = client.Parse(new[] { "johnsmith@gmail.com", "john@gmail.com", "gmail.com" }, true);
+                    var parseResponse = await client.ParseAsync(new[] { "johnsmith@gmail.com", "john@gmail.com", "gmail.com" }, true).ConfigureAwait(false);
 
                     Assert.IsNotNull(parseResponse);
                     Assert.IsNotNull(parseResponse.Parsed);
@@ -149,11 +150,11 @@
             }
 
             [TestMethod]
-            public void WhenSyntaxOnlyIsFalse()
+            public async Task WhenSyntaxOnlyIsFalse()
             {
                 using (var client = new HttpGuardpostClient(MailgunPublicApiKey))
                 {
-                    var parseResponse = client.Parse(new[] { "johnsmith@gmail.com", "john@gmail.com", "gmail.com" }, false);
+                    var parseResponse = await client.ParseAsync(new[] { "johnsmith@gmail.com", "john@gmail.com", "gmail.com" }, false).ConfigureAwait(false);
 
                     Assert.IsNotNull(parseResponse);
                     Assert.IsNotNull(parseResponse.Parsed);
@@ -168,11 +169,11 @@
 
             [TestMethod]
             [ExpectedException(typeof(InvalidOperationException))]
-            public void WhenApiKeyIsInvalid_ShouldThrow()
+            public async Task WhenApiKeyIsInvalid_ShouldThrow()
             {
                 using (var client = new HttpGuardpostClient("invalidApiKey"))
                 {
-                    client.Parse(new [] { "johnsmith@gmail.com" }, false);
+                    await client.ParseAsync(new[] { "johnsmith@gmail.com" }, false).ConfigureAwait(false);
                 }
             }
         }

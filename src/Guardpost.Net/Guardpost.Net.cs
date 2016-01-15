@@ -46,6 +46,7 @@
     using System.Net.Http;
     using System.Net.Http.Headers;
     using System.Text;
+    using System.Threading.Tasks;
 
     public interface IGuardpostClient : IDisposable
     {
@@ -56,7 +57,7 @@
         /// </summary>
         /// <param name="address">An email address to validate. (Maximum: 512 characters)</param>
         /// <returns>A ValidationResponse.</returns>
-        ValidateResponse Validate(string address);
+        Task<ValidateResponse> ValidateAsync(string address);
 
         /// <summary>
         /// Parses an enumeration of email addresses into two lists: parsed
@@ -69,7 +70,7 @@
         /// <param name="addresses">An enumeration of addresses. (Maximum: 524288 characters)</param>
         /// <param name="syntaxOnly">Perform only syntax checks or DNS and ESP specific validation as well.</param>
         /// <returns>A ParseResponse.</returns>
-        ParseResponse Parse(IEnumerable<string> addresses, bool syntaxOnly);
+        Task<ParseResponse> ParseAsync(IEnumerable<string> addresses, bool syntaxOnly);
     }
 
     public class ParseResponse
@@ -118,12 +119,12 @@
             if (string.IsNullOrWhiteSpace(apiKey))
                 throw new ArgumentNullException("apiKey");
 
-            var auth = Convert.ToBase64String(ASCIIEncoding.ASCII.GetBytes(string.Format("{0}:{1}", "api", apiKey)));
+            var auth = Convert.ToBase64String(Encoding.ASCII.GetBytes(string.Format("{0}:{1}", "api", apiKey)));
             var baseAddress = new Uri("https://api.mailgun.net/v2/address/", UriKind.Absolute);
             _httpClient = new HttpClient { BaseAddress = baseAddress };
             _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", auth);
-            _httpClient.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("Guardpost.Net", "1.0.0"));
+            _httpClient.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("Guardpost.Net", "2.0.0"));
         }
 
         /// <summary>
@@ -133,7 +134,7 @@
         /// </summary>
         /// <param name="address">An email address to validate. (Maximum: 512 characters)</param>
         /// <returns>A ValidationResponse.</returns>
-        public ValidateResponse Validate(string address)
+        public async Task<ValidateResponse> ValidateAsync(string address)
         {
             if (string.IsNullOrWhiteSpace(address))
                 throw new ArgumentNullException("address");
@@ -142,8 +143,8 @@
                 throw new ArgumentException("maximum of 512 characters", "address");
 
             var requestUri = string.Format("validate?address={0}", address);
-            var httpResult = _httpClient.GetAsync(requestUri).Result;
-            var content = httpResult.Content.ReadAsStringAsync().Result;
+            var httpResult = await _httpClient.GetAsync(requestUri).ConfigureAwait(false);
+            var content = await httpResult.Content.ReadAsStringAsync().ConfigureAwait(false);
 
             if (httpResult.StatusCode == HttpStatusCode.OK)
                 return JsonConvert.DeserializeObject<ValidateResponse>(content);
@@ -164,7 +165,7 @@
         /// <param name="addresses">An enumeration of addresses. (Maximum: 524288 characters)</param>
         /// <param name="syntaxOnly">Perform only syntax checks or DNS and ESP specific validation as well.</param>
         /// <returns>A ParseResponse.</returns>
-        public ParseResponse Parse(IEnumerable<string> addresses, bool syntaxOnly)
+        public async Task<ParseResponse> ParseAsync(IEnumerable<string> addresses, bool syntaxOnly)
         {
             if (addresses == null)
                 throw new ArgumentNullException("addresses");
@@ -177,8 +178,8 @@
                 throw new ArgumentException("maximum of 524288 characters", "addresses");
 
             var requestUri = string.Format("parse?syntax_only={0}&addresses={1}", syntaxOnly, addressesJoined);
-            var httpResult = _httpClient.GetAsync(requestUri).Result;
-            var content = httpResult.Content.ReadAsStringAsync().Result;
+            var httpResult = await _httpClient.GetAsync(requestUri).ConfigureAwait(false);
+            var content = await httpResult.Content.ReadAsStringAsync().ConfigureAwait(false);
 
             if (httpResult.StatusCode == HttpStatusCode.OK)
                 return JsonConvert.DeserializeObject<ParseResponse>(content);

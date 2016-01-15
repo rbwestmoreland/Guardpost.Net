@@ -22,21 +22,21 @@ var mailgunPublicApiKey = "pubkey-1234567890abcdefghijklmnopqrstuvwxyz";
 //validate
 using (var guardpost = new HttpGuardpostClient(mailgunPublicApiKey))
 {
-  var validateResponse = guardpost.Validate("john.smith@gmail.com");
+  var validateResponse = await guardpost.ValidateAsync("john.smith@gmail.com").ConfigureAwait(false);
 }
 
 //parse (syntax only)
 using (var guardpost = new HttpGuardpostClient(mailgunPublicApiKey))
 {
   var addresses = new [] { "john.smith@gmail.com", "john@gmail.com", "gmail.com" };
-  var parseResponse = guardpost.Parse(addresses, true);
+  var parseResponse = await guardpost.ParseAsync(addresses, true).ConfigureAwait(false);
 }
 
 //parse (syntax + DNS and ESP specific validation as well)
 using (var guardpost = new HttpGuardpostClient(mailgunPublicApiKey))
 {
   var addresses = new [] { "john.smith@gmail.com", "john@gmail.com", "gmail.com" };
-  var parseResponse = guardpost.Parse(addresses, false);
+  var parseResponse = await guardpost.ParseAsync(addresses, false).ConfigureAwait(false);
 }
 ``` 
 
