@@ -9,7 +9,7 @@ Installation
 ---  
 Just download and add [Guardpost.Net.cs](src/Guardpost.Net/Guardpost.Net.cs) to your project.
 
-* Requires .NET 4.0 or later
+* Requires .NET 4.5 or later
 * Requires Json.Net 4.0.1 or later
 
 Usage
