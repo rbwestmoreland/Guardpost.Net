@@ -120,11 +120,11 @@
                 throw new ArgumentNullException("apiKey");
 
             var auth = Convert.ToBase64String(Encoding.ASCII.GetBytes(string.Format("{0}:{1}", "api", apiKey)));
-            var baseAddress = new Uri("https://api.mailgun.net/v2/address/", UriKind.Absolute);
+            var baseAddress = new Uri("https://api.mailgun.net/v3/address/", UriKind.Absolute);
             _httpClient = new HttpClient { BaseAddress = baseAddress };
             _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", auth);
-            _httpClient.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("Guardpost.Net", "2.0.0"));
+            _httpClient.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("Guardpost.Net", "3.0.0"));
         }
 
         /// <summary>
@@ -149,7 +149,7 @@
             if (httpResult.StatusCode == HttpStatusCode.OK)
                 return JsonConvert.DeserializeObject<ValidateResponse>(content);
             else if (httpResult.StatusCode == HttpStatusCode.Unauthorized)
-                throw new  InvalidOperationException("Invalid apiKey.");
+                throw new InvalidOperationException("Invalid apiKey.");
             else
                 throw new Exception("An unknown error occured.");
         }
